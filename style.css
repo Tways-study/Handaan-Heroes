@@ -1,0 +1,280 @@
+/* --- Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root {
+    --gold-primary: #D4AF37;
+    --gold-light: #FFD27F;
+    --dark-bg: #1A1A1A;
+    --text-main: #333333;
+    --text-muted: #666666;
+    --white: #ffffff;
+    --off-white: #f4f4f4;
+    --shadow: 0 10px 30px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--off-white);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+/* --- Header --- */
+header {
+    background-color: var(--dark-bg);
+    color: var(--gold-light);
+    text-align: center;
+    padding: 100px 20px 140px; /* Extra bottom padding for the overlap */
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+}
+
+header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+header p {
+    font-weight: 300;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+/* --- Layout --- */
+main {
+    max-width: 1100px;
+    margin: -80px auto 60px; /* Pulls content up into the header area */
+    padding: 0 20px;
+}
+
+#catalog h2 {
+    color: #D4AF37; /* Replace #333 with any color that contrasts well with the background */
+    font-weight: bold; /* Optional: Make the text bold for better visibility */
+}
+
+section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 40px;
+    text-align: center;
+    position: relative;
+}
+
+section h2::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: var(--gold-primary);
+    margin: 10px auto;
+}
+
+/* --- Catalog Grid & Image Fix --- */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-bottom: 80px;
+}
+
+.card {
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden; /* Important: keeps zoomed images inside the rounded corners */
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
+
+.item-image-wrapper {
+    width: 100%;
+    height: 220px; /* Fixed height for all images */
+    background: #e0e0e0;
+    position: relative;
+    overflow: hidden;
+}
+
+.rental-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Fix: ensures image fills the box without stretching */
+    transition: transform 0.5s ease;
+}
+
+.card:hover .rental-img {
+    transform: scale(1.1); /* Zoom effect on hover */
+}
+
+/* Fallback icon if image is missing */
+.img-fallback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    z-index: 0;
+    opacity: 0.2;
+}
+
+.card-details {
+    padding: 25px;
+    text-align: center;
+}
+
+.card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.price {
+    color: var(--gold-primary);
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.add-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 50px;
+    border: 2px solid var(--dark-bg);
+    background: transparent;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.add-btn:hover {
+    background: var(--dark-bg);
+    color: var(--gold-light);
+}
+
+/* --- Checkout Form --- */
+#checkout {
+    background: var(--white);
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+#rental-form input {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+#rental-form input:focus {
+    outline: none;
+    border-color: var(--gold-primary);
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+}
+
+.order-summary {
+    text-align: center;
+    margin: 25px 0;
+}
+
+#item-count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gold-primary);
+}
+
+.submit-btn {
+    width: 100%;
+    background: var(--gold-primary);
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.submit-btn:hover {
+    background: var(--dark-bg);
+}
+
+ /* ... keep all previous CSS ... */
+
+.stock {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+}
+
+.stock-count {
+    font-weight: 700;
+    color: var(--dark-bg);
+}
+
+.out-of-stock {
+    color: #e74c3c !important; /* Professional Red */
+    font-weight: bold;
+}
+
+.btn-disabled {
+    background-color: #eee !important;
+    border-color: #ddd !important;
+    color: #aaa !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+/* --- Stock Display Styling --- */
+.stock {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    font-weight: 400;
+}
+
+.stock-count {
+    font-weight: 600;
+    color: var(--dark-bg);
+    transition: var(--transition);
+}
+
+/* Style for when an item is Out of Stock */
+.out-of-stock {
+    color: #e74c3c !important; /* Professional Red */
+    font-weight: 700;
+}
+
+/* Disabled button look */
+.btn-disabled {
+    background-color: #eee !important;
+    border-color: #ddd !important;
+    color: #aaa !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 600px) {
+    header h1 { font-size: 2.2rem; }
+    main { margin-top: -40px; }
+}
