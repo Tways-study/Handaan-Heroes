@@ -1,78 +1,114 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Handaan Heroes | Premium Rentals</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Handaan Heroes | Premium Edition</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <header>
-        <div class="header-content">
-            <h1>Handaan Heroes</h1>
-            <p>Here to save every occasion!</p>
-        </div>
+      <div class="header-content">
+        <h1>Handaan Heroes</h1>
+        <p>Elevating your events with unparalleled elegance.</p>
+      </div>
     </header>
 
     <main>
-        <section id="catalog">
-            <h2>Our Inventory</h2>
-            <div class="grid-container">
-                
-                <div class="card" id="card-chair">
-                    <div class="item-image-wrapper">
-                        <img src="img1.jpg" alt="Standard Ruby Plastic Chair" class="rental-img">
-                        <div class="img-fallback">🪑</div>
-                    </div>
-                    <div class="card-details">
-                        <h3>Standard Ruby Plastic Chair</h3>
-                        <p class="price">₱15.00 / pc</p>
-                        <p class="stock">Available: <span id="stock-chair" class="stock-count">30</span></p>
-                        <button class="add-btn" data-item="chair">Add to Order</button>
-                    </div>
-                </div>
-
-                <div class="card" id="card-table">
-                    <div class="item-image-wrapper">
-                        <img src="img2.jpg" alt="Lifetime Rectangle Table" class="rental-img">
-                        <div class="img-fallback">テーブル</div>
-                    </div>
-                    <div class="card-details">
-                        <h3>Lifetime Rectangle Foldable Table</h3>
-                        <p class="price">₱150.00 / pc</p>
-                        <p class="stock">Available: <span id="stock-table" class="stock-count">2</span></p>
-                        <button class="add-btn" data-item="table">Add to Order</button>
-                    </div>
-                </div>
-
+      <section id="catalog">
+        <h2>Our Premium Inventory</h2>
+        <div class="grid-container">
+          <!-- Fallback items if JS fails -->
+          <div class="card" id="card-chair">
+            <div class="item-image-wrapper">
+              <img
+                src="img1.jpg"
+                alt="Standard Ruby Plastic Chair"
+                class="rental-img"
+              />
+              <div class="img-fallback">🪑</div>
             </div>
-        </section>
+            <div class="card-details">
+              <h3>Standard Ruby Plastic Chair</h3>
+              <p class="price">₱15.00 / pc</p>
+              <p class="stock">
+                Available: <span id="stock-chair" class="stock-count">30</span>
+              </p>
+              <button class="add-btn" data-item="chair">Add to Order</button>
+            </div>
+          </div>
 
-        <section id="checkout">
-            <h2>Finalize Booking</h2>
-            <form id="rental-form">
-                <div class="form-group">
-                    <input type="text" id="customer-name" placeholder="Your Full Name" required>
-                </div>
-                <div class="form-group">
-                    <input type="date" id="rental-date" required>
-                </div>
-                <div class="form-group">
-                    <input type="tel" id="contact-number" placeholder="Your Contact Number (e.g. 0912...)" required>
-                </div>
-                
-                <div class="order-summary">
-                    <p style="font-weight: bold; margin-bottom: 5px;">Cart Items:</p>
-                    <ul id="cart-items" style="list-style: none; padding: 0; margin-bottom: 10px;"></ul>
-                    <p>Total Items: <span id="item-count">0</span></p>
-                </div>
+          <div class="card" id="card-table">
+            <div class="item-image-wrapper">
+              <img
+                src="img2.jpg"
+                alt="Lifetime Rectangle Table"
+                class="rental-img"
+              />
+              <div class="img-fallback">テーブル</div>
+            </div>
+            <div class="card-details">
+              <h3>Lifetime Rectangle Foldable Table</h3>
+              <p class="price">₱150.00 / pc</p>
+              <p class="stock">
+                Available: <span id="stock-table" class="stock-count">2</span>
+              </p>
+              <button class="add-btn" data-item="table">Add to Order</button>
+            </div>
+          </div>
+        </div>
+      </section>
 
-                <button type="submit" class="submit-btn">Confirm Rental</button>
-            </form>
-        </section>
+      <section id="checkout">
+        <h2>Finalize Booking</h2>
+        <form id="rental-form">
+          <div class="form-group">
+            <label for="customer-name">Full Name</label>
+            <input
+              type="text"
+              id="customer-name"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="rental-date">Event Date</label>
+            <input type="date" id="rental-date" required />
+          </div>
+          <div class="form-group">
+            <label for="contact-number">Contact Number</label>
+            <input
+              type="tel"
+              id="contact-number"
+              placeholder="e.g. 09123456789"
+              required
+            />
+          </div>
+
+          <div class="order-summary">
+            <div class="order-summary-title">Your Selection</div>
+            <ul id="cart-items"></ul>
+            <div class="total-items">
+              <span>Total Items</span>
+              <span id="item-count">0</span>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="submit-btn"
+            id="submit-order-btn"
+            disabled
+          >
+            Confirm Rental
+          </button>
+        </form>
+      </section>
     </main>
 
+    <!-- Toast Notifications Container -->
+    <div id="toast-container"></div>
+
     <script src="script.js"></script>
-</body>
+  </body>
 </html>

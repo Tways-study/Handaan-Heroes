@@ -1,6 +1,8 @@
 let orderCount = 0;
 const selectedItems = [];
 const itemCountDisplay = document.getElementById('item-count');
+const submitBtn = document.getElementById('submit-order-btn');
+const toastContainer = document.getElementById('toast-container');
 
 window.onload = async () => {
     try {
@@ -12,22 +14,26 @@ window.onload = async () => {
         console.error("Could not load products:", err);
         attachButtonListeners(); // Fallback to HTML products
     }
+    checkCartState();
 };
 
 function renderProducts(products) {
     const grid = document.querySelector('.grid-container');
     grid.innerHTML = '';
     products.forEach(item => {
+        const isOutOfStock = item.stock <= 0;
         grid.innerHTML += `
             <div class="card">
                 <div class="item-image-wrapper">
-                    <img src="${item.image_url}" class="rental-img">
+                    <img src="${item.image_url}" class="rental-img" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML += '<div class=\\'img-fallback\\'>📦</div>';">
                 </div>
                 <div class="card-details">
                     <h3>${item.name}</h3>
                     <p class="price">${item.price}</p>
-                    <p class="stock">Available: <span class="stock-count">${item.stock}</span></p>
-                    <button class="add-btn">Add to Order</button>
+                    <p class="stock">Available: <span class="stock-count ${isOutOfStock ? 'out-of-stock' : ''}">${item.stock}</span></p>
+                    <button class="add-btn" ${isOutOfStock ? 'disabled' : ''}>
+                        ${isOutOfStock ? 'Sold Out' : 'Add to Order'}
+                    </button>
                 </div>
             </div>`;
     });
@@ -48,10 +54,12 @@ function attachButtonListeners() {
                 orderCount++;
                 selectedItems.push({ name: name, price: price });
                 updateCartUI();
+                showToast(`Added ${name} to cart`);
                 
                 if (stock === 0) {
                     button.disabled = true;
                     button.innerText = "Sold Out";
+                    stockSpan.classList.add('out-of-stock');
                 }
             }
         });
@@ -60,6 +68,17 @@ function attachButtonListeners() {
 
 document.getElementById('rental-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    if (selectedItems.length === 0) {
+        showToast("Your cart is empty!", true);
+        return;
+    }
+
+    // Add loading state
+    const originalBtnText = submitBtn.innerText;
+    submitBtn.innerText = "Processing...";
+    submitBtn.disabled = true;
+
     const orderData = {
         customerName: document.getElementById('customer-name').value,
         date: document.getElementById('rental-date').value,
@@ -67,15 +86,26 @@ document.getElementById('rental-form').addEventListener('submit', async (e) => {
         items: selectedItems
     };
 
-    const response = await fetch('http://localhost:3000/api/order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
-    });
+    try {
+        const response = await fetch('http://localhost:3000/api/order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
 
-    if (response.ok) {
-        alert("Order Saved!");
-        window.location.reload(); // THIS refreshes the stock from the DB
+        if (response.ok) {
+            showToast("Order Confirmed! Thank you.");
+            setTimeout(() => window.location.reload(), 2000);
+        } else {
+            const resData = await response.json();
+            showToast(resData.error || "Failed to submit order", true);
+            submitBtn.innerText = originalBtnText;
+            submitBtn.disabled = false;
+        }
+    } catch (err) {
+        showToast("Network error occurred", true);
+        submitBtn.innerText = originalBtnText;
+        submitBtn.disabled = false;
     }
 });
 
@@ -93,11 +123,13 @@ function updateCartUI() {
 
     Object.keys(counts).forEach(name => {
         const li = document.createElement('li');
-        li.style.display = 'flex';
-        li.style.justifyContent = 'space-between';
-        li.style.alignItems = 'center';
-        li.style.marginBottom = '5px';
-        li.innerHTML = `<span>${counts[name].count}x ${name}</span> <button type="button" class="remove-btn" data-name="${name}" style="background: #ff4d4d; color: white; border: none; border-radius: 3px; padding: 2px 5px; cursor: pointer;">Remove 1</button>`;
+        li.innerHTML = `
+            <div>
+                <span class="cart-item-qty">${counts[name].count}x</span>
+                <span class="cart-item-name">${name}</span>
+            </div>
+            <button type="button" class="remove-btn" data-name="${name}">Remove</button>
+        `;
         cartItemsList.appendChild(li);
     });
 
@@ -114,13 +146,46 @@ function updateCartUI() {
                         const stockSpan = card.querySelector('.stock-count');
                         let stock = parseInt(stockSpan.innerText);
                         stockSpan.innerText = stock + 1;
+                        stockSpan.classList.remove('out-of-stock');
                         const addBtn = card.querySelector('.add-btn');
                         addBtn.disabled = false;
                         addBtn.innerText = "Add to Order";
                     }
                 });
                 updateCartUI();
+                showToast(`Removed 1 ${nameToRemove}`);
             }
         });
     });
+
+    checkCartState();
+}
+
+function checkCartState() {
+    if (orderCount === 0) {
+        submitBtn.disabled = true;
+    } else {
+        submitBtn.disabled = false;
+    }
+}
+
+function showToast(message, isError = false) {
+    if (!toastContainer) return;
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${isError ? 'error' : ''}`;
+    
+    const icon = isError ? '⚠️' : '✓';
+    toast.innerHTML = `<span class="toast-icon">${icon}</span> <span>${message}</span>`;
+    
+    toastContainer.appendChild(toast);
+    
+    // Trigger animation
+    setTimeout(() => toast.classList.add('show'), 10);
+    
+    // Remove after 3s
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400); // Wait for transition
+    }, 3000);
 }
