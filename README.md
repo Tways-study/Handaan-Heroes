@@ -1,2 +1,2 @@
 # Handaan-Heroes
-Simple webpage for booking orders with online
+Simple webpage for booking orders online
