@@ -32,7 +32,7 @@ header {
     color: var(--gold-light);
     text-align: center;
     padding: 100px 20px 140px; /* Extra bottom padding for the overlap */
-    clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+    clip-path: none; /* Removed diagonal shape for straight edge */
 }
 
 header h1 {
@@ -61,19 +61,23 @@ main {
 }
 
 section h2 {
-    font-size: 1.8rem;
-    margin-bottom: 40px;
+    font-size: 1.9rem;
+    margin-bottom: 24px;
     text-align: center;
     position: relative;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
 }
 
 section h2::after {
     content: '';
     display: block;
-    width: 60px;
-    height: 4px;
+    width: 40px;
+    height: 3px;
     background: var(--gold-primary);
     margin: 10px auto;
+    border-radius: 2px;
 }
 
 /* --- Catalog Grid & Image Fix --- */

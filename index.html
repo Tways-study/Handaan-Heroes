@@ -53,17 +53,19 @@
             <h2>Finalize Booking</h2>
             <form id="rental-form">
                 <div class="form-group">
-                    <input type="text" placeholder="Your Full Name" required>
+                    <input type="text" id="customer-name" placeholder="Your Full Name" required>
                 </div>
                 <div class="form-group">
-                    <input type="date" required>
+                    <input type="date" id="rental-date" required>
                 </div>
                 <div class="form-group">
-                    <input type="tel" placeholder="Your Contact Number (e.g. 0912...)" required>
+                    <input type="tel" id="contact-number" placeholder="Your Contact Number (e.g. 0912...)" required>
                 </div>
                 
                 <div class="order-summary">
-                    <p>Items Selected: <span id="item-count">0</span></p>
+                    <p style="font-weight: bold; margin-bottom: 5px;">Cart Items:</p>
+                    <ul id="cart-items" style="list-style: none; padding: 0; margin-bottom: 10px;"></ul>
+                    <p>Total Items: <span id="item-count">0</span></p>
                 </div>
 
                 <button type="submit" class="submit-btn">Confirm Rental</button>

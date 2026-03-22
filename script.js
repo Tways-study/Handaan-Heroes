@@ -5,10 +5,12 @@ const itemCountDisplay = document.getElementById('item-count');
 window.onload = async () => {
     try {
         const response = await fetch('http://localhost:3000/api/products');
+        if (!response.ok) throw new Error("API failed");
         const products = await response.json();
         renderProducts(products);
     } catch (err) {
         console.error("Could not load products:", err);
+        attachButtonListeners(); // Fallback to HTML products
     }
 };
 
@@ -45,7 +47,7 @@ function attachButtonListeners() {
                 stockSpan.innerText = --stock;
                 orderCount++;
                 selectedItems.push({ name: name, price: price });
-                itemCountDisplay.innerText = orderCount;
+                updateCartUI();
                 
                 if (stock === 0) {
                     button.disabled = true;
@@ -58,11 +60,10 @@ function attachButtonListeners() {
 
 document.getElementById('rental-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const inputs = e.target.querySelectorAll('input');
     const orderData = {
-        customerName: inputs[0].value,
-        date: inputs[1].value,
-        contact: inputs[2].value,
+        customerName: document.getElementById('customer-name').value,
+        date: document.getElementById('rental-date').value,
+        contact: document.getElementById('contact-number').value,
         items: selectedItems
     };
 
@@ -77,3 +78,49 @@ document.getElementById('rental-form').addEventListener('submit', async (e) => {
         window.location.reload(); // THIS refreshes the stock from the DB
     }
 });
+
+function updateCartUI() {
+    itemCountDisplay.innerText = orderCount;
+    const cartItemsList = document.getElementById('cart-items');
+    if (!cartItemsList) return;
+    cartItemsList.innerHTML = '';
+    
+    const counts = {};
+    for (let item of selectedItems) {
+        if (!counts[item.name]) counts[item.name] = { count: 0, price: item.price };
+        counts[item.name].count++;
+    }
+
+    Object.keys(counts).forEach(name => {
+        const li = document.createElement('li');
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.alignItems = 'center';
+        li.style.marginBottom = '5px';
+        li.innerHTML = `<span>${counts[name].count}x ${name}</span> <button type="button" class="remove-btn" data-name="${name}" style="background: #ff4d4d; color: white; border: none; border-radius: 3px; padding: 2px 5px; cursor: pointer;">Remove 1</button>`;
+        cartItemsList.appendChild(li);
+    });
+
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const nameToRemove = e.target.getAttribute('data-name');
+            const idx = selectedItems.findIndex(i => i.name === nameToRemove);
+            if (idx !== -1) {
+                selectedItems.splice(idx, 1);
+                orderCount--;
+                
+                document.querySelectorAll('.card').forEach(card => {
+                    if (card.querySelector('h3').innerText === nameToRemove) {
+                        const stockSpan = card.querySelector('.stock-count');
+                        let stock = parseInt(stockSpan.innerText);
+                        stockSpan.innerText = stock + 1;
+                        const addBtn = card.querySelector('.add-btn');
+                        addBtn.disabled = false;
+                        addBtn.innerText = "Add to Order";
+                    }
+                });
+                updateCartUI();
+            }
+        });
+    });
+}

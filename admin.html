@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin | Handaan Heroes</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .admin-container {
+        padding: 20px;
+        max-width: 1000px;
+        margin: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background-color: #d4af37;
+        color: white;
+      }
+      .delete-btn {
+        background: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .delete-btn:hover {
+        background: #cc0000;
+      }
+    </style>
+  </head>
+  <body>
+    <header><h1>Admin Dashboard</h1></header>
+    <div class="admin-container">
+      <h2>Customer Orders</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Contact</th>
+            <th>Items</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="admin-table-body"></tbody>
+      </table>
+    </div>
+
+    <script>
+      function formatItems(jsonStr) {
+        try {
+          const items = JSON.parse(jsonStr);
+          const counts = {};
+          items.forEach(i => counts[i.name] = (counts[i.name] || 0) + 1);
+          return Object.entries(counts).map(([name, qty]) => `${qty}x ${name}`).join('<br>');
+        } catch {
+          return "Invalid items";
+        }
+      }
+
+      async function fetchOrders() {
+        const response = await fetch("http://localhost:3000/api/orders");
+        const orders = await response.json();
+        const tableBody = document.getElementById("admin-table-body");
+        tableBody.innerHTML = "";
+
+        orders.forEach((order) => {
+          tableBody.innerHTML += `
+                    <tr>
+                        <td>${order.id}</td>
+                        <td>${order.customer_name}</td>
+                        <td>${order.rental_date}</td>
+                        <td>${order.contact_number}</td>
+                        <td>${formatItems(order.items_json)}</td>
+                        <td>
+                            <button class="delete-btn" onclick="deleteOrder(${order.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+        });
+      }
+
+      async function deleteOrder(id) {
+        if (confirm("Are you sure you want to delete this order?")) {
+          const response = await fetch(
+            `http://localhost:3000/api/order/${id}`,
+            {
+              method: "DELETE",
+            },
+          );
+          if (response.ok) {
+            fetchOrders(); // Refresh the list
+          }
+        }
+      }
+
+      window.onload = fetchOrders;
+    </script>
+  </body>
+</html>
