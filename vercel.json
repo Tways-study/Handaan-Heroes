@@ -1,14 +1,17 @@
 {
   "version": 2,
   "builds": [
-    { "src": "server.js", "use": "@vercel/node" },
+    { "src": "api/**/*.js", "use": "@vercel/node" },
     { "src": "*.html", "use": "@vercel/static" },
     { "src": "style.css", "use": "@vercel/static" },
     { "src": "script.js", "use": "@vercel/static" },
     { "src": "*.jpg", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/server.js" },
+    { "src": "/api/products", "dest": "/api/products.js" },
+    { "src": "/api/orders", "dest": "/api/orders.js" },
+    { "src": "/api/order", "dest": "/api/order.js" },
+    { "src": "/api/order/(.*)", "dest": "/api/order.js?id=$1" },
     { "src": "/", "dest": "/index.html" },
     { "src": "/(.*)", "dest": "/$1" }
   ]
