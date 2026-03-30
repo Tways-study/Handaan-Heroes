@@ -64,4 +64,9 @@ app.delete('/api/order/:id', async (req, res) => {
     res.json(data);
 });
 
-app.listen(PORT, () => console.log(`Server: http://localhost:${PORT}`));
+// Local dev only — Vercel handles the server in production
+if (require.main === module) {
+    app.listen(PORT, () => console.log(`Server: http://localhost:${PORT}`));
+}
+
+module.exports = app;

@@ -431,7 +431,7 @@
       async function fetchOrders() {
         document.getElementById("order-count-label").textContent = "Loading…";
         try {
-          const res = await fetch("http://localhost:3000/api/orders");
+          const res = await fetch("/api/orders");
           if (!res.ok) throw new Error("API error");
           allOrders = await res.json();
 
@@ -457,7 +457,7 @@
       async function deleteOrder(id) {
         if (!confirm("Delete this order? This will restore the stock.")) return;
         try {
-          const res = await fetch(`http://localhost:3000/api/order/${id}`, {
+          const res = await fetch(`/api/order/${id}`, {
             method: "DELETE",
           });
           if (res.ok) {

@@ -6,7 +6,7 @@ const toastContainer = document.getElementById('toast-container');
 
 window.onload = async () => {
     try {
-        const response = await fetch('http://localhost:3000/api/products');
+        const response = await fetch('/api/products');
         if (!response.ok) throw new Error("API failed");
         const products = await response.json();
         renderProducts(products);
@@ -88,7 +88,7 @@ document.getElementById('rental-form').addEventListener('submit', async (e) => {
     };
 
     try {
-        const response = await fetch('http://localhost:3000/api/order', {
+        const response = await fetch('/api/order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderData)
