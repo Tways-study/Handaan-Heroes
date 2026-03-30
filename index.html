@@ -3,20 +3,90 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Handaan Heroes | Premium Edition</title>
+    <title>Handaan Heroes | Premium Event Rentals</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <!-- Navigation -->
+    <nav class="site-nav" id="site-nav">
+      <a href="#" class="nav-brand">
+        <span class="nav-logo-icon">✦</span>
+        Handaan Heroes
+      </a>
+      <div class="nav-actions">
+        <a href="#catalog" class="nav-link">Inventory</a>
+        <a href="#checkout" class="nav-link">Book Now</a>
+        <a href="admin.html" class="nav-link nav-admin">
+          <i class="fa-solid fa-shield-halved"></i> Admin
+        </a>
+        <button
+          class="nav-cart-btn"
+          onclick="
+            document
+              .getElementById('checkout')
+              .scrollIntoView({ behavior: 'smooth' })
+          "
+          title="View cart"
+        >
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Hero -->
     <header>
+      <div class="hero-overlay"></div>
       <div class="header-content">
+        <div class="hero-eyebrow">
+          Premium Event Rentals · Rizal, Philippines
+        </div>
         <h1>Handaan Heroes</h1>
-        <p>Elevating your events with unparalleled elegance.</p>
+        <p>
+          Elevating your celebrations with exceptional quality & seamless
+          service
+        </p>
+        <div class="hero-actions">
+          <a href="#catalog" class="hero-btn-primary">
+            <i class="fa-solid fa-box-open"></i> Browse Inventory
+          </a>
+          <a href="#checkout" class="hero-btn-secondary">
+            <i class="fa-solid fa-calendar-check"></i> Book Now
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-number">500+</span>
+            <span class="hero-stat-label">Events Served</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-number">100%</span>
+            <span class="hero-stat-label">Satisfaction</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-number">5 ★</span>
+            <span class="hero-stat-label">Rated Service</span>
+          </div>
+        </div>
       </div>
     </header>
 
     <main>
+      <!-- Catalog -->
       <section id="catalog">
-        <h2>Our Premium Inventory</h2>
+        <div class="section-header">
+          <h2>Our Premium Inventory</h2>
+          <p class="section-subheading">
+            Carefully curated, professionally maintained rental items for your
+            perfect event.
+          </p>
+        </div>
         <div class="grid-container">
           <!-- Fallback items if JS fails -->
           <div class="card" id="card-chair">
@@ -26,15 +96,22 @@
                 alt="Standard Ruby Plastic Chair"
                 class="rental-img"
               />
-              <div class="img-fallback">🪑</div>
+              <div class="img-fallback"><i class="fa-solid fa-chair"></i></div>
+              <div class="card-badge">Popular</div>
             </div>
             <div class="card-details">
               <h3>Standard Ruby Plastic Chair</h3>
-              <p class="price">₱15.00 / pc</p>
+              <p class="price">
+                <i class="fa-solid fa-tag"></i> ₱15.00
+                <span class="price-unit">/ pc</span>
+              </p>
               <p class="stock">
+                <i class="fa-solid fa-warehouse"></i>
                 Available: <span id="stock-chair" class="stock-count">30</span>
               </p>
-              <button class="add-btn" data-item="chair">Add to Order</button>
+              <button class="add-btn" data-item="chair">
+                <i class="fa-solid fa-plus"></i> Add to Order
+              </button>
             </div>
           </div>
 
@@ -45,38 +122,58 @@
                 alt="Lifetime Rectangle Table"
                 class="rental-img"
               />
-              <div class="img-fallback">テーブル</div>
+              <div class="img-fallback"><i class="fa-solid fa-table"></i></div>
             </div>
             <div class="card-details">
               <h3>Lifetime Rectangle Foldable Table</h3>
-              <p class="price">₱150.00 / pc</p>
+              <p class="price">
+                <i class="fa-solid fa-tag"></i> ₱150.00
+                <span class="price-unit">/ pc</span>
+              </p>
               <p class="stock">
+                <i class="fa-solid fa-warehouse"></i>
                 Available: <span id="stock-table" class="stock-count">2</span>
               </p>
-              <button class="add-btn" data-item="table">Add to Order</button>
+              <button class="add-btn" data-item="table">
+                <i class="fa-solid fa-plus"></i> Add to Order
+              </button>
             </div>
           </div>
         </div>
       </section>
 
+      <!-- Checkout -->
       <section id="checkout">
-        <h2>Finalize Booking</h2>
+        <div class="section-header">
+          <h2>Finalize Booking</h2>
+          <p class="section-subheading">
+            Fill in your details below to reserve your items.
+          </p>
+        </div>
         <form id="rental-form">
-          <div class="form-group">
-            <label for="customer-name">Full Name</label>
-            <input
-              type="text"
-              id="customer-name"
-              placeholder="Enter your full name"
-              required
-            />
+          <div class="form-row">
+            <div class="form-group">
+              <label for="customer-name">
+                <i class="fa-solid fa-user"></i> Full Name
+              </label>
+              <input
+                type="text"
+                id="customer-name"
+                placeholder="Enter your full name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="rental-date">
+                <i class="fa-solid fa-calendar-days"></i> Event Date
+              </label>
+              <input type="date" id="rental-date" required />
+            </div>
           </div>
           <div class="form-group">
-            <label for="rental-date">Event Date</label>
-            <input type="date" id="rental-date" required />
-          </div>
-          <div class="form-group">
-            <label for="contact-number">Contact Number</label>
+            <label for="contact-number">
+              <i class="fa-solid fa-phone"></i> Contact Number
+            </label>
             <input
               type="tel"
               id="contact-number"
@@ -86,7 +183,10 @@
           </div>
 
           <div class="order-summary">
-            <div class="order-summary-title">Your Selection</div>
+            <div class="order-summary-title">
+              <i class="fa-solid fa-cart-shopping"></i> Your Selection
+              <span class="summary-badge" id="summary-badge">0 items</span>
+            </div>
             <ul id="cart-items"></ul>
             <div class="total-items">
               <span>Total Items</span>
@@ -100,15 +200,31 @@
             id="submit-order-btn"
             disabled
           >
-            Confirm Rental
+            <i class="fa-solid fa-circle-check"></i> Confirm Rental
           </button>
         </form>
       </section>
     </main>
 
-    <!-- Toast Notifications Container -->
-    <div id="toast-container"></div>
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <span class="footer-logo">✦ Handaan Heroes</span>
+          <p>Your trusted partner for premium event rentals.</p>
+        </div>
+        <div class="footer-links">
+          <a href="#catalog">Inventory</a>
+          <a href="#checkout">Book Now</a>
+          <a href="admin.html">Admin Portal</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Handaan Heroes. All rights reserved.</p>
+      </div>
+    </footer>
 
+    <div id="toast-container"></div>
     <script src="script.js"></script>
   </body>
 </html>

@@ -25,14 +25,15 @@ function renderProducts(products) {
         grid.innerHTML += `
             <div class="card">
                 <div class="item-image-wrapper">
-                    <img src="${item.image_url}" class="rental-img" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML += '<div class=\\'img-fallback\\'>📦</div>';">
+                    <img src="${item.image_url}" class="rental-img" onerror="this.onerror=null; this.src=''; this.parentElement.querySelector('.img-fallback').style.display='flex';">
+                    <div class="img-fallback" style="display:none"><i class="fa-solid fa-box"></i></div>
                 </div>
                 <div class="card-details">
                     <h3>${item.name}</h3>
-                    <p class="price">${item.price}</p>
-                    <p class="stock">Available: <span class="stock-count ${isOutOfStock ? 'out-of-stock' : ''}">${item.stock}</span></p>
+                    <p class="price"><i class="fa-solid fa-tag"></i> ${item.price} <span class="price-unit">/ pc</span></p>
+                    <p class="stock"><i class="fa-solid fa-warehouse"></i> Available: <span class="stock-count ${isOutOfStock ? 'out-of-stock' : ''}">${item.stock}</span></p>
                     <button class="add-btn" ${isOutOfStock ? 'disabled' : ''}>
-                        ${isOutOfStock ? 'Sold Out' : 'Add to Order'}
+                        <i class="fa-solid fa-plus"></i> ${isOutOfStock ? 'Sold Out' : 'Add to Order'}
                     </button>
                 </div>
             </div>`;
@@ -114,6 +115,14 @@ function updateCartUI() {
     const cartItemsList = document.getElementById('cart-items');
     if (!cartItemsList) return;
     cartItemsList.innerHTML = '';
+
+    // Sync nav badge
+    const cartBadge = document.getElementById('cart-badge');
+    if (cartBadge) cartBadge.innerText = orderCount;
+
+    // Sync summary badge
+    const summaryBadge = document.getElementById('summary-badge');
+    if (summaryBadge) summaryBadge.innerText = `${orderCount} item${orderCount !== 1 ? 's' : ''}`;
     
     const counts = {};
     for (let item of selectedItems) {

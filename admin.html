@@ -4,64 +4,218 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard | Handaan Heroes</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="admin-layout">
+    <!-- Login Gate -->
+    <div class="admin-login-overlay" id="admin-login-overlay">
+      <div class="admin-login-card">
+        <div class="login-logo">✦ Handaan Heroes</div>
+        <h2>Admin Access</h2>
+        <p>Enter your password to access the dashboard</p>
+        <div class="login-form-group">
+          <label><i class="fa-solid fa-lock"></i> Password</label>
+          <input
+            type="password"
+            id="admin-password"
+            placeholder="Enter admin password"
+          />
+        </div>
+        <div id="login-error" class="login-error" style="display: none">
+          <i class="fa-solid fa-triangle-exclamation"></i> Invalid password.
+          Please try again.
+        </div>
+        <button class="login-btn" onclick="checkAdminPassword()">
+          <i class="fa-solid fa-right-to-bracket"></i> Sign In
+        </button>
+      </div>
+    </div>
+
+    <!-- Dashboard Layout -->
+    <div class="admin-layout" id="admin-layout" style="display: none">
       <!-- Sidebar -->
-      <aside class="admin-sidebar">
-        <div class="admin-logo">Handaan Heroes</div>
-        <ul class="admin-nav">
-          <li><a href="#" class="active">Dashboard</a></li>
-          <li><a href="index.html">View Storefront</a></li>
-        </ul>
+      <aside class="admin-sidebar" id="admin-sidebar">
+        <div class="admin-logo">
+          <span class="sidebar-icon">✦</span>
+          <span>Handaan Heroes</span>
+        </div>
+
+        <nav class="admin-nav-section">
+          <span class="nav-section-label">Main</span>
+          <ul class="admin-nav">
+            <li>
+              <a href="#" class="active">
+                <i class="fa-solid fa-gauge-high"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a href="index.html">
+                <i class="fa-solid fa-store"></i>
+                <span>View Storefront</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <nav class="admin-nav-section">
+          <span class="nav-section-label">Tools</span>
+          <ul class="admin-nav">
+            <li>
+              <a
+                href="#"
+                onclick="
+                  fetchOrders();
+                  return false;
+                "
+              >
+                <i class="fa-solid fa-arrows-rotate"></i>
+                <span>Refresh Orders</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="#"
+                onclick="
+                  exportCSV();
+                  return false;
+                "
+              >
+                <i class="fa-solid fa-file-export"></i>
+                <span>Export CSV</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+          <button class="sidebar-logout-btn" onclick="logoutAdmin()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Sign Out</span>
+          </button>
+        </div>
       </aside>
 
       <!-- Main Content -->
       <main class="admin-main">
-        <div class="dashboard-header">
-          <h1 class="dashboard-title">Overview</h1>
+        <!-- Topbar -->
+        <div class="admin-topbar">
+          <div class="topbar-left">
+            <button
+              class="menu-toggle"
+              onclick="toggleSidebar()"
+              title="Toggle sidebar"
+            >
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div>
+              <div class="topbar-greeting" id="topbar-greeting">
+                Welcome, Admin
+              </div>
+              <div class="topbar-date" id="topbar-date"></div>
+            </div>
+          </div>
+          <div class="topbar-right">
+            <button class="topbar-refresh-btn" onclick="fetchOrders()">
+              <i class="fa-solid fa-arrows-rotate"></i> Refresh
+            </button>
+            <div class="topbar-avatar" title="Admin">A</div>
+          </div>
         </div>
 
-        <!-- Dashboard Stats -->
+        <!-- Overview Stats -->
+        <div class="dashboard-section-title">
+          <i class="fa-solid fa-chart-line"></i> Overview
+        </div>
         <div class="stats-grid">
-          <div class="stat-card">
-            <span class="stat-title">Total Orders</span>
-            <span class="stat-value" id="stat-orders">0</span>
+          <div class="stat-card stat-blue">
+            <div class="stat-icon">
+              <i class="fa-solid fa-file-invoice"></i>
+            </div>
+            <div class="stat-body">
+              <span class="stat-title">Total Bookings</span>
+              <span class="stat-value" id="stat-orders">—</span>
+            </div>
           </div>
-          <div class="stat-card">
-            <span class="stat-title">Total Items Rented</span>
-            <span class="stat-value" id="stat-items">0</span>
+          <div class="stat-card stat-gold">
+            <div class="stat-icon">
+              <i class="fa-solid fa-boxes-stacked"></i>
+            </div>
+            <div class="stat-body">
+              <span class="stat-title">Items Rented</span>
+              <span class="stat-value" id="stat-items">—</span>
+            </div>
+          </div>
+          <div class="stat-card stat-green">
+            <div class="stat-icon"><i class="fa-solid fa-peso-sign"></i></div>
+            <div class="stat-body">
+              <span class="stat-title">Est. Revenue</span>
+              <span class="stat-value" id="stat-revenue">—</span>
+            </div>
+          </div>
+          <div class="stat-card stat-purple">
+            <div class="stat-icon">
+              <i class="fa-solid fa-calendar-day"></i>
+            </div>
+            <div class="stat-body">
+              <span class="stat-title">Upcoming Events</span>
+              <span class="stat-value" id="stat-upcoming">—</span>
+            </div>
           </div>
         </div>
 
-        <div class="dashboard-header" style="margin-bottom: 20px">
-          <h2 class="dashboard-title" style="font-size: 1.5rem">
-            Recent Bookings
-          </h2>
+        <!-- Orders Section -->
+        <div class="dashboard-section-title" style="margin-top: 30px">
+          <i class="fa-solid fa-list-check"></i> Recent Bookings
+        </div>
+        <div class="table-toolbar">
+          <div class="search-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input
+              type="text"
+              id="order-search"
+              class="search-input"
+              placeholder="Search by name or date…"
+              oninput="filterOrders()"
+            />
+          </div>
+          <div class="topbar-right">
+            <span class="order-count-label" id="order-count-label"
+              >Loading…</span
+            >
+            <button class="export-btn" onclick="exportCSV()">
+              <i class="fa-solid fa-download"></i> Export CSV
+            </button>
+          </div>
         </div>
 
-        <!-- Orders Table -->
         <div class="table-container">
           <table>
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Customer</th>
-                <th>Rental Date</th>
+                <th>Event Date</th>
                 <th>Contact</th>
                 <th>Items</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="admin-table-body">
-              <!-- Loading State -->
               <tr>
                 <td
                   colspan="6"
-                  style="text-align: center; color: var(--text-muted)"
+                  style="
+                    text-align: center;
+                    padding: 40px;
+                    color: var(--text-muted);
+                  "
                 >
-                  Loading orders...
+                  <i class="fa-solid fa-spinner fa-spin"></i> Loading orders…
                 </td>
               </tr>
             </tbody>
@@ -70,10 +224,77 @@
       </main>
     </div>
 
-    <!-- Toast Container -->
     <div id="toast-container"></div>
 
     <script>
+      // ── Auth ──────────────────────────────────────────
+      const ADMIN_PASSWORD = "admin123"; // Change this in production
+
+      function checkAdminPassword() {
+        const input = document.getElementById("admin-password").value;
+        const errEl = document.getElementById("login-error");
+        const pwdEl = document.getElementById("admin-password");
+
+        if (input === ADMIN_PASSWORD) {
+          document.getElementById("admin-login-overlay").style.display = "none";
+          document.getElementById("admin-layout").style.display = "flex";
+          sessionStorage.setItem("admin_auth", "true");
+          initDashboard();
+        } else {
+          errEl.style.display = "flex";
+          pwdEl.classList.add("input-error");
+          setTimeout(() => {
+            errEl.style.display = "none";
+            pwdEl.classList.remove("input-error");
+          }, 3000);
+        }
+      }
+
+      document
+        .getElementById("admin-password")
+        .addEventListener("keydown", (e) => {
+          if (e.key === "Enter") checkAdminPassword();
+        });
+
+      function logoutAdmin() {
+        sessionStorage.removeItem("admin_auth");
+        document.getElementById("admin-layout").style.display = "none";
+        document.getElementById("admin-login-overlay").style.display = "flex";
+        document.getElementById("admin-password").value = "";
+      }
+
+      // Auto-login if already authenticated this session
+      if (sessionStorage.getItem("admin_auth") === "true") {
+        document.getElementById("admin-login-overlay").style.display = "none";
+        document.getElementById("admin-layout").style.display = "flex";
+        initDashboard();
+      }
+
+      // ── Sidebar toggle ────────────────────────────────
+      function toggleSidebar() {
+        document.getElementById("admin-sidebar").classList.toggle("collapsed");
+      }
+
+      // ── Topbar date/greeting ──────────────────────────
+      function updateTopbar() {
+        const now = new Date();
+        const h = now.getHours();
+        const greeting =
+          h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+        document.getElementById("topbar-greeting").textContent =
+          greeting + ", Admin";
+        document.getElementById("topbar-date").textContent =
+          now.toLocaleDateString("en-PH", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+      }
+
+      // ── Data & rendering ──────────────────────────────
+      let allOrders = [];
+
       function formatItems(jsonStr) {
         try {
           const items = JSON.parse(jsonStr);
@@ -82,11 +303,11 @@
           return Object.entries(counts)
             .map(
               ([name, qty]) =>
-                `<span class="item-badge">${qty}x ${name}</span>`,
+                `<span class="item-badge">${qty}× ${name}</span>`,
             )
             .join(" ");
         } catch {
-          return '<span class="item-badge" style="background: rgba(231,76,60,0.1); color: #E74C3C;">Invalid items</span>';
+          return '<span class="item-badge item-badge-error">Invalid data</span>';
         }
       }
 
@@ -94,100 +315,185 @@
         let total = 0;
         orders.forEach((o) => {
           try {
-            const items = JSON.parse(o.items_json);
-            total += items.length;
+            total += JSON.parse(o.items_json).length;
           } catch (e) {}
         });
         return total;
       }
 
+      function calculateRevenue(orders) {
+        let total = 0;
+        orders.forEach((o) => {
+          try {
+            JSON.parse(o.items_json).forEach((item) => {
+              const p = parseFloat((item.price || "0").replace(/[^0-9.]/g, ""));
+              if (!isNaN(p)) total += p;
+            });
+          } catch (e) {}
+        });
+        return (
+          "₱" + total.toLocaleString("en-PH", { minimumFractionDigits: 2 })
+        );
+      }
+
+      function calculateUpcoming(orders) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return orders.filter((o) => new Date(o.rental_date) >= today).length;
+      }
+
+      function renderOrders(orders) {
+        const tbody = document.getElementById("admin-table-body");
+        tbody.innerHTML = "";
+
+        if (orders.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted)"><i class="fa-solid fa-inbox"></i> No orders found.</td></tr>';
+          return;
+        }
+
+        orders.forEach((order) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><span class="order-id">#${order.id}</span></td>
+            <td>
+              <div class="customer-cell">
+                <div class="customer-avatar">${order.customer_name.charAt(0).toUpperCase()}</div>
+                <span style="font-weight:600">${order.customer_name}</span>
+              </div>
+            </td>
+            <td><i class="fa-regular fa-calendar" style="color:var(--text-muted);margin-right:6px"></i>${order.rental_date}</td>
+            <td><i class="fa-solid fa-phone" style="color:var(--text-muted);margin-right:6px"></i>${order.contact_number}</td>
+            <td class="order-items-cell">${formatItems(order.items_json)}</td>
+            <td>
+              <button class="remove-btn" onclick="deleteOrder(${order.id})">
+                <i class="fa-solid fa-trash"></i> Delete
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      function updateOrderCountLabel(shown, total) {
+        const el = document.getElementById("order-count-label");
+        if (el)
+          el.textContent =
+            shown === total
+              ? `${total} order${total !== 1 ? "s" : ""}`
+              : `Showing ${shown} of ${total}`;
+      }
+
+      function filterOrders() {
+        const q = document.getElementById("order-search").value.toLowerCase();
+        const filtered = allOrders.filter(
+          (o) =>
+            o.customer_name.toLowerCase().includes(q) ||
+            o.rental_date.includes(q),
+        );
+        renderOrders(filtered);
+        updateOrderCountLabel(filtered.length, allOrders.length);
+      }
+
       async function fetchOrders() {
+        document.getElementById("order-count-label").textContent = "Loading…";
         try {
-          const response = await fetch("http://localhost:3000/api/orders");
-          if (!response.ok) throw new Error("Failed to fetch orders");
-          const orders = await response.json();
+          const res = await fetch("http://localhost:3000/api/orders");
+          if (!res.ok) throw new Error("API error");
+          allOrders = await res.json();
 
-          // Update Stats
-          document.getElementById("stat-orders").innerText = orders.length;
+          document.getElementById("stat-orders").innerText = allOrders.length;
           document.getElementById("stat-items").innerText =
-            calculateTotalItems(orders);
+            calculateTotalItems(allOrders);
+          document.getElementById("stat-revenue").innerText =
+            calculateRevenue(allOrders);
+          document.getElementById("stat-upcoming").innerText =
+            calculateUpcoming(allOrders);
 
-          const tableBody = document.getElementById("admin-table-body");
-          tableBody.innerHTML = "";
-
-          if (orders.length === 0) {
-            tableBody.innerHTML =
-              '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No orders found.</td></tr>';
-            return;
-          }
-
-          orders.forEach((order) => {
-            tableBody.innerHTML += `
-                        <tr>
-                            <td>#${order.id}</td>
-                            <td style="font-weight: 600;">${order.customer_name}</td>
-                            <td>${order.rental_date}</td>
-                            <td>${order.contact_number}</td>
-                            <td class="order-items-cell">${formatItems(order.items_json)}</td>
-                            <td>
-                                <button class="remove-btn" onclick="deleteOrder(${order.id})">Delete Order</button>
-                            </td>
-                        </tr>
-                    `;
-          });
-        } catch (error) {
-          console.error(error);
-          showToast("Failed to load orders.", true);
+          renderOrders(allOrders);
+          updateOrderCountLabel(allOrders.length, allOrders.length);
+        } catch (err) {
+          console.error(err);
+          showToast("Failed to load orders. Is the server running?", true);
           document.getElementById("admin-table-body").innerHTML =
-            '<tr><td colspan="6" style="text-align: center; color: #E74C3C;">Error loading orders. Is the server running?</td></tr>';
+            '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--red)"><i class="fa-solid fa-circle-exclamation"></i> Error connecting to server.</td></tr>';
+          document.getElementById("order-count-label").textContent = "Error";
         }
       }
 
       async function deleteOrder(id) {
-        if (
-          confirm(
-            "Are you sure you want to delete this order? This action will restore the stock.",
-          )
-        ) {
-          try {
-            const response = await fetch(
-              `http://localhost:3000/api/order/${id}`,
-              { method: "DELETE" },
-            );
-            if (response.ok) {
-              showToast("Order deleted successfully!");
-              fetchOrders(); // Refresh the list
-            } else {
-              const err = await response.json();
-              showToast(err.error || "Failed to delete order", true);
-            }
-          } catch (e) {
-            showToast("Network error deleting order", true);
+        if (!confirm("Delete this order? This will restore the stock.")) return;
+        try {
+          const res = await fetch(`http://localhost:3000/api/order/${id}`, {
+            method: "DELETE",
+          });
+          if (res.ok) {
+            showToast("Order deleted and stock restored.");
+            fetchOrders();
+          } else {
+            const err = await res.json();
+            showToast(err.error || "Failed to delete order.", true);
           }
+        } catch (e) {
+          showToast("Network error while deleting.", true);
         }
+      }
+
+      function exportCSV() {
+        if (allOrders.length === 0) {
+          showToast("No orders to export.", true);
+          return;
+        }
+        const rows = [["ID", "Customer", "Rental Date", "Contact", "Items"]];
+        allOrders.forEach((o) => {
+          let items = "";
+          try {
+            items = JSON.parse(o.items_json)
+              .map((i) => i.name)
+              .join("; ");
+          } catch (e) {}
+          rows.push([
+            o.id,
+            o.customer_name,
+            o.rental_date,
+            o.contact_number,
+            items,
+          ]);
+        });
+        const csv = rows
+          .map((r) =>
+            r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","),
+          )
+          .join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `handaan-heroes-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        showToast("CSV exported successfully!");
       }
 
       function showToast(message, isError = false) {
         const container = document.getElementById("toast-container");
         if (!container) return;
-
         const toast = document.createElement("div");
         toast.className = `toast ${isError ? "error" : ""}`;
-
-        const icon = isError ? "⚠️" : "✓";
-        toast.innerHTML = `<span class="toast-icon">${icon}</span> <span>${message}</span>`;
-
+        const icon = isError
+          ? '<i class="fa-solid fa-triangle-exclamation"></i>'
+          : '<i class="fa-solid fa-circle-check"></i>';
+        toast.innerHTML = `<span class="toast-icon">${icon}</span><span>${message}</span>`;
         container.appendChild(toast);
-
         setTimeout(() => toast.classList.add("show"), 10);
-
         setTimeout(() => {
           toast.classList.remove("show");
           setTimeout(() => toast.remove(), 400);
-        }, 3000);
+        }, 3500);
       }
 
-      window.onload = fetchOrders;
+      function initDashboard() {
+        updateTopbar();
+        fetchOrders();
+      }
     </script>
   </body>
 </html>
