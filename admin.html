@@ -9,6 +9,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
     <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   </head>
   <body>
     <!-- Login Gate -->
@@ -227,27 +228,52 @@
     <div id="toast-container"></div>
 
     <script>
-      // ── Auth ──────────────────────────────────────────
-      const ADMIN_PASSWORD = "admin123"; // Change this in production
+      // ── Supabase Auth ─────────────────────────────────
+      const SUPABASE_URL = "https://lmyzhwxpuhsfxofnifhj.supabase.co";
+      const SUPABASE_ANON_KEY = sb_publishable_9FdGCW_7r1jSZsaz7Abc9g_BEbSGTEX;
+      ("sb_publishable_9FdGCW_7r1jSZsaz7Abc9g_BEbSGTEX");
+      // Must match the admin user's email in your Supabase Auth dashboard
+      const ADMIN_EMAIL = "twicenavarro23@gmail.com";
 
-      function checkAdminPassword() {
+      const sbClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+      );
+
+      async function checkAdminPassword() {
         const input = document.getElementById("admin-password").value;
         const errEl = document.getElementById("login-error");
         const pwdEl = document.getElementById("admin-password");
+        const btn = document.querySelector(".login-btn");
 
-        if (input === ADMIN_PASSWORD) {
-          document.getElementById("admin-login-overlay").style.display = "none";
-          document.getElementById("admin-layout").style.display = "flex";
-          sessionStorage.setItem("admin_auth", "true");
-          initDashboard();
-        } else {
+        btn.disabled = true;
+        btn.innerHTML =
+          '<i class="fa-solid fa-spinner fa-spin"></i> Signing in…';
+
+        const { error } = await sbClient.auth.signInWithPassword({
+          email: ADMIN_EMAIL,
+          password: input,
+        });
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+
+        if (error) {
           errEl.style.display = "flex";
           pwdEl.classList.add("input-error");
           setTimeout(() => {
             errEl.style.display = "none";
             pwdEl.classList.remove("input-error");
           }, 3000);
+        } else {
+          showDashboard();
         }
+      }
+
+      function showDashboard() {
+        document.getElementById("admin-login-overlay").style.display = "none";
+        document.getElementById("admin-layout").style.display = "flex";
+        initDashboard();
       }
 
       document
@@ -256,19 +282,17 @@
           if (e.key === "Enter") checkAdminPassword();
         });
 
-      function logoutAdmin() {
-        sessionStorage.removeItem("admin_auth");
+      async function logoutAdmin() {
+        await sbClient.auth.signOut();
         document.getElementById("admin-layout").style.display = "none";
         document.getElementById("admin-login-overlay").style.display = "flex";
         document.getElementById("admin-password").value = "";
       }
 
-      // Auto-login if already authenticated this session
-      if (sessionStorage.getItem("admin_auth") === "true") {
-        document.getElementById("admin-login-overlay").style.display = "none";
-        document.getElementById("admin-layout").style.display = "flex";
-        initDashboard();
-      }
+      // Auto-login if there is already an active Supabase session
+      sbClient.auth.getSession().then(({ data: { session } }) => {
+        if (session) showDashboard();
+      });
 
       // ── Sidebar toggle ────────────────────────────────
       function toggleSidebar() {
@@ -295,9 +319,18 @@
       // ── Data & rendering ──────────────────────────────
       let allOrders = [];
 
+      function parseItemsJson(val) {
+        if (Array.isArray(val)) return val;
+        try {
+          return JSON.parse(val);
+        } catch {
+          return [];
+        }
+      }
+
       function formatItems(jsonStr) {
         try {
-          const items = JSON.parse(jsonStr);
+          const items = parseItemsJson(jsonStr);
           const counts = {};
           items.forEach((i) => (counts[i.name] = (counts[i.name] || 0) + 1));
           return Object.entries(counts)
@@ -315,7 +348,7 @@
         let total = 0;
         orders.forEach((o) => {
           try {
-            total += JSON.parse(o.items_json).length;
+            total += parseItemsJson(o.items_json).length;
           } catch (e) {}
         });
         return total;
@@ -325,7 +358,7 @@
         let total = 0;
         orders.forEach((o) => {
           try {
-            JSON.parse(o.items_json).forEach((item) => {
+            parseItemsJson(o.items_json).forEach((item) => {
               const p = parseFloat((item.price || "0").replace(/[^0-9.]/g, ""));
               if (!isNaN(p)) total += p;
             });
@@ -448,7 +481,7 @@
         allOrders.forEach((o) => {
           let items = "";
           try {
-            items = JSON.parse(o.items_json)
+            items = parseItemsJson(o.items_json)
               .map((i) => i.name)
               .join("; ");
           } catch (e) {}
